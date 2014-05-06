@@ -695,6 +695,7 @@ Replacer replacements[] =
 	Replacer("&reg;",												"®"),
 	Replacer("&trade;",												"™"),
 	Replacer("<math>(.*?)</math>",									"[some heavy maths]"),
+	Replacer("<div.*?>(.*?)</div>",									"$1"),
 	Replacer("\\\"",												"'"),
 	Replacer("@@",													"@")
 };
