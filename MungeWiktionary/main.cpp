@@ -683,6 +683,7 @@ Replacer replacements[] =
 	Replacer("\\[\\[([^\\]]*?)\\|([^\\]]*?)\\]\\]",					"$1"),
 	Replacer("\\[\\[([^ ]|[a-z]*?)\\]\\]",							"@$1@"),
 	Replacer("\\[\\[(.*?)\\]\\]",									"$1"),
+	Replacer("\\[(http.*?)\\], ",									""),
 	Replacer("&nbsp;",												" "),
 	Replacer("&lt;",												"<"),
 	Replacer("&gt;",												">"),
@@ -694,6 +695,9 @@ Replacer replacements[] =
 	Replacer("&copy;",												"©"),
 	Replacer("&reg;",												"®"),
 	Replacer("&trade;",												"™"),
+	Replacer("&mdash;",												"-"),
+	Replacer("&dagger;",											"->--"),
+
 	Replacer("<math>(.*?)</math>",									"[some heavy maths]"),
 	Replacer("<div.*?>(.*?)</div>",									"$1"),
 	Replacer("\\\"",												"'"),
