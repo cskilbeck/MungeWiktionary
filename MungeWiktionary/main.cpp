@@ -16,12 +16,16 @@ using std::smatch;
 using std::map;
 using std::unordered_map;
 using std::pair;
+using std::string;
 
 #define STRLEN(x) x, sizeof(x) - 1
 
 //////////////////////////////////////////////////////////////////////
 
 std::set<string> gEnable;
+char const *inputFile = null;
+char const *outputDictionaryFile = null;
+char const *outputWordsFile = null;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -1258,15 +1262,17 @@ void Output()
 
 //	printf("// WordCount %d\n", gWords.size());
 //	printf("// Characters: %s\n", charMap.GetUTF8Chars().c_str());
-	printf("{\n");
-	printf("\t\"words\": {\n");
+	FILE *df = fopen(outputDictionaryFile, "w");
+
+	fprintf(df, "{\n");
+	fprintf(df, "\t\"words\": {\n");
 
 	size_t wordCount = gWords.size();
 
 	for(auto i = gWords.begin(); i != gWords.end(); ++i)
 	{
 		Word *n = i->second;
-		printf("\t\t\"%s\": \"", n->mWord.c_str());
+		fprintf(df, "\t\t\"%s\": \"", n->mWord.c_str());
 
 		for(uint j=0; j<Definition::kNumDefinitionTypes; ++j)
 		{
@@ -1277,7 +1283,7 @@ void Output()
 				for(auto k = n->mDefinition[j].begin(), e = n->mDefinition[j].end(); k != e; ++k)
 				{
 					Definition *d = *k;
-					printf("(%s) %s\\n", Definition::sDefinitionNames[j], d->mText.c_str());
+					fprintf(df, "(%s) %s\\n", Definition::sDefinitionNames[j], d->mText.c_str());
 					if(--numdefs == 0)
 					{
 						break;
@@ -1285,10 +1291,19 @@ void Output()
 				}
 			}
 		}
-		printf("\"%c\n", (--wordCount == 0) ? ' ' : ',');
+		fprintf(df, "\"%c\n", (--wordCount == 0) ? ' ' : ',');
 	}
-	printf("\t}\n}\n");
+	fprintf(df, "\t}\n}\n");
+	fclose(df);
 
+	FILE *wf = fopen(outputWordsFile, "w");
+	fprintf(wf, "{ \"words\": {\n");
+	for(auto i = gWords.begin(); i != gWords.end(); ++i)
+	{
+		fprintf(wf, "\"%s\":0%c\n", i->second->mWord.c_str(), (--wordCount == 0) ? ' ' : ',');
+	}
+	fprintf(wf, "}\n}\n");
+	fclose(wf);
 	// output a dictionary file
 
 	//FILE *f = fopen("english.dictionary", "wb");
@@ -1363,15 +1378,36 @@ void Output()
 
 int main(int argc, char *argv[])
 {
-	LoadEnable();
-	string s;
-	while(getline(std::cin, s))
+	// argv[1]: input wiktionary file
+	// argv[2]: output dictionary.json
+	// argv[3]: output words.json
+
+	if(argc != 4)
 	{
-		ProcessLine(s);
+		printf("usage\n");
+		return 1;
 	}
-	Purge();
-	Output();
-	return 0;
+	else
+	{
+		inputFile = argv[1];
+		outputDictionaryFile = argv[2];
+		outputWordsFile = argv[3];
+		LoadEnable();
+		std::filebuf f;
+		if(f.open(inputFile, std::ios::in))
+		{
+			std::istream str(&f);
+			string s;
+			while(getline(str, s))
+			{
+				ProcessLine(s);
+			}
+			f.close();
+		}
+		Purge();
+		Output();
+		return 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
