@@ -692,6 +692,8 @@ Replacer replacements[] =
 	Replacer("&lt;",												"<"),
 	Replacer("&gt;",												">"),
 	Replacer("&amp;",												"&"),
+	Replacer("&rarr;",												" -> "),
+	Replacer("&larr;",												" <- "),
 	Replacer("&cent;",												"¢"),
 	Replacer("&pound;",												"£"),
 	Replacer("&yen;",												"¥"),
